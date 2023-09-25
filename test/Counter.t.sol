@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import {Counter} from "../src/Counter.sol";
 import {Wallet} from "../src/Wallet.sol";
 
-contract TestERC1271 is Test {
+contract TestCounter is Test {
     address private eoa;
     uint256 private privkey;
 
@@ -23,8 +23,7 @@ contract TestERC1271 is Test {
         vm.stopPrank();
     }
 
-    function testSetNumber() external {
-        uint256 expectResult = 33;
+    function testSetNumber(uint256 expectResult) external {
         bytes32 hash = keccak256(abi.encode(expectResult));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(privkey, hash);
 
