@@ -13,7 +13,10 @@ contract Wallet is IERC1271, Ownable {
         bytes32 _hash,
         bytes calldata _signature
     ) external view returns (bytes4 magic) {
-        require(ECDSA.recover(_hash, _signature) == owner(), "invalid signer");
-        magic = IERC1271.isValidSignature.selector;
+        if (ECDSA.recover(_hash, _signature) == owner()) {
+            magic = IERC1271.isValidSignature.selector;
+        } else {
+            magic = hex"00000000";
+        }
     }
 }
