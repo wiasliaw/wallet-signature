@@ -5,22 +5,28 @@ import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol";
 
 import {IERC1271} from "./interface/IERC1271.sol";
+import {ICounter} from "./interface/ICounter.sol";
+import {Errors} from "./common/Errors.sol";
 
-contract CounterEIP191 is Ownable {
-    uint256 public number;
+contract CounterEIP191 is ICounter, Ownable {
+    uint256 internal number;
 
     constructor(address _addr) Ownable(_addr) {
         require(_addr.code.length > 0, "not a contract");
     }
 
-    function setNumber(uint256 newNumber, bytes calldata signature) external {
+    function set(uint256 newNumber, bytes calldata signature) external {
         bytes32 hash = MessageHashUtils.toEthSignedMessageHash(
             abi.encode(newNumber)
         );
-        require(
-            IERC1271(owner()).isValidSignature(hash, signature) ==
-                IERC1271.isValidSignature.selector
-        );
+        if (
+            IERC1271(owner()).isValidSignature(hash, signature) !=
+            IERC1271.isValidSignature.selector
+        ) revert Errors.InvalidSignature();
         number = newNumber;
+    }
+
+    function get() external view returns (uint256) {
+        return number;
     }
 }
