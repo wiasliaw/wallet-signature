@@ -8,6 +8,7 @@ import "forge-std/Test.sol";
 import {Wallet} from "../src/Wallet.sol";
 import {CounterRaw} from "../src/CounterRaw.sol";
 import {CounterEIP191} from "../src/CounterEIP191.sol";
+import {CounterEIP712} from "../src/CounterEIP712.sol";
 
 // common
 import {Errors} from "../src/common/Errors.sol";
@@ -19,6 +20,7 @@ abstract contract BaseTest is Test {
 
     CounterRaw internal raw;
     CounterEIP191 internal eip191;
+    CounterEIP712 internal eip712;
 
     function setUp() external {
         EOA = makeAccount("EOA");
@@ -28,10 +30,11 @@ abstract contract BaseTest is Test {
         wallet = new Wallet();
         raw = new CounterRaw(address(wallet));
         eip191 = new CounterEIP191(address(wallet));
+        eip712 = new CounterEIP712(address(wallet));
         vm.stopPrank();
     }
 
     function _prepareDigest(
         uint256 value
-    ) internal pure virtual returns (bytes32);
+    ) internal view virtual returns (bytes32);
 }

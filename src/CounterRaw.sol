@@ -11,7 +11,7 @@ contract CounterRaw is ICounter, Ownable {
     uint256 internal number;
 
     constructor(address _addr) Ownable(_addr) {
-        require(_addr.code.length > 0, "not a contract");
+        if (_addr.code.length == 0) revert Errors.NotContract(_addr);
     }
 
     function set(uint256 newNumber, bytes calldata signature) external {
